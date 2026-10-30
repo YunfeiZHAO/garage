@@ -4,3 +4,7 @@
 **/*.rs.bk
 *.swp
 /.direnv
+/.env
+
+# editor
+.vscode

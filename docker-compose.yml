@@ -1,0 +1,37 @@
+services:
+  garage:
+    image: dxflrs/garage:v2.5.0
+    restart: unless-stopped
+    volumes:
+      - ./config/garage.toml:/etc/garage.toml:ro
+      - ${GARAGE_META_DIR:-/mnt/garage/meta}:/var/lib/garage/meta
+      - ${GARAGE_DATA_DIR:-/mnt/garage/data}:/var/lib/garage/data
+    environment:
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN}
+      GARAGE_METRICS_TOKEN: ${GARAGE_METRICS_TOKEN:-}
+      RUST_LOG: ${RUST_LOG:-garage=info}
+    networks:
+      - dokploy-network
+
+  garage-webui:
+    image: khairul169/garage-webui:1.1.0
+    restart: unless-stopped
+    depends_on:
+      - garage
+    volumes:
+      - ./config/garage.toml:/etc/garage.toml:ro
+    environment:
+      PORT: "3909"
+      API_BASE_URL: http://garage:3903
+      API_ADMIN_KEY: ${GARAGE_ADMIN_TOKEN:?Set GARAGE_ADMIN_TOKEN}
+      S3_ENDPOINT_URL: http://garage:3900
+      S3_REGION: garage
+      AUTH_USER_PASS: ${GARAGE_WEBUI_AUTH:?Set GARAGE_WEBUI_AUTH to username:bcrypt_hash}
+    networks:
+      - dokploy-network
+
+networks:
+  # Dokploy's existing network used by Traefik.
+  dokploy-network:
+    external: true

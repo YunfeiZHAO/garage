@@ -1,0 +1,26 @@
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "lmdb"
+metadata_auto_snapshot_interval = "6h"
+
+# 1 for single-node; increase to 3 for a multi-node cluster
+replication_factor = 1
+
+compression_level = 2
+
+rpc_bind_addr = "[::]:3901"
+# rpc_public_addr = "<this-node-public-ip>:3901"  # required for multi-node
+# rpc_secret is set via GARAGE_RPC_SECRET env var
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "0.0.0.0:3900"
+public_endpoint = "https://s3.yunfeizhao.com"
+
+[s3_web]
+bind_addr = "[::]:3902"
+index = "index.html"
+
+[admin]
+api_bind_addr = "[::]:3903"
+# admin_token and metrics_token are set via GARAGE_ADMIN_TOKEN / GARAGE_METRICS_TOKEN env vars
